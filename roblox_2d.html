@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Roblox-like Game</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { background: #f0f0f0; display: block; }
+        #ui { position: absolute; top: 10px; left: 10px; }
+        #currency { position: absolute; top: 10px; right: 10px; font-size: 20px; }
+        #menu { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            text-align: center; 
+            background: url('path/to/your/image.jpg') no-repeat center center; 
+            background-size: cover; 
+            padding: 20px; 
+            border-radius: 10px; 
+        }
+        #menu button { 
+            display: block; 
+            margin: 10px auto; 
+            padding: 10px 20px; 
+            font-size: 20px; 
+        }
+        #exitPrompt {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            display: none;
+        }
+        #exitPrompt button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 20px;
+        }
+        #changelog {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #createGameButton {
+            position: absolute;
+            bottom: 50px;
+            right: 10px;
+            padding: 10px 20px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <div id="ui">
+        <button onclick="changeAvatar('red')">Red Avatar</button>
+        <button onclick="changeAvatar('green')">Green Avatar</button>
+        <button onclick="changeAvatar('blue')">Blue Avatar</button>
+    </div>
+    <div id="currency">Currency: 0</div>
+    <div id="menu">
+        <button onclick="startGame()">Start Game</button>
+        <button onclick="openSettings()">Settings</button>
+        <button onclick="openExitPrompt()">Exit Game</button>
+    </div>
+    <div id="exitPrompt">
+        <p>Are you sure you want to leave?</p>
+        <button onclick="leaveGame()">Leave</button>
+        <button onclick="continueGame()">Don't Leave</button>
+    </div>
+    <button id="createGameButton" onclick="window.location.href='roblox_studio_2d.html'">Roblox Studio 2D</button>
+    <div id="changelog">
+        <h3>Changelog</h3>
+        <ul>
+            <li>Version 1.0: Initial Release!</li>
+            <li>This game is beta testing, However, This is also in alpha. Thank you for downloading Roblox 2D.</li>
+        </ul>
+    </div>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            width: 50,
+            height: 100,
+            color: 'blue',
+            speed: 5
+        };
+
+        let currency = 0;
+        let gameStarted = false;
+
+        const walkSound = new Audio('path/to/walking-sound.mp3');
+
+        function drawPlayer() {
+            // Draw head
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x - player.width / 4, player.y - player.height / 2, player.width / 2, player.height / 4);
+            // Draw body
+            ctx.fillRect(player.x - player.width / 4, player.y - player.height / 4, player.width / 2, player.height / 2);
+            // Draw arms
+            ctx.fillRect(player.x - player.width / 2, player.y - player.height / 4, player.width / 4, player.height / 2);
+            ctx.fillRect(player.x + player.width / 4, player.y - player.height / 4, player.width / 4, player.height / 2);
+            // Draw legs
+            ctx.fillRect(player.x - player.width / 4, player.y + player.height / 4, player.width / 4, player.height / 2);
+            ctx.fillRect(player.x, player.y + player.height / 4, player.width / 4, player.height / 2);
+        }
+
+        function update() {
+            if (gameStarted) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawPlayer();
+                document.getElementById('currency').innerText = `Currency: ${currency}`;
+            }
+            requestAnimationFrame(update);
+        }
+
+        function movePlayer(e) {
+            if (gameStarted) {
+                switch (e.key) {
+                    case 'ArrowUp':
+                        player.y -= player.speed;
+                        earnCurrency(1); // Earn 1 currency for moving up
+                        playWalkSound();
+                        break;
+                    case 'ArrowDown':
+                        player.y += player.speed;
+                        earnCurrency(1); // Earn 1 currency for moving down
+                        playWalkSound();
+                        break;
+                    case 'ArrowLeft':
+                        player.x -= player.speed;
+                        earnCurrency(1); // Earn 1 currency for moving left
+                        playWalkSound();
+                        break;
+                    case 'ArrowRight':
+                        player.x += player.speed;
+                        earnCurrency(1); // Earn 1 currency for moving right
+                        playWalkSound();
+                        break;
+                }
+            }
+        }
+
+        function playWalkSound() {
+            walkSound.currentTime = 0;
+            walkSound.play();
+        }
+
+        function changeAvatar(color) {
+            player.color = color;
+            earnCurrency(10); // Earn 10 currency for changing avatar
+        }
+
+        function earnCurrency(amount) {
+            currency += amount;
+            document.getElementById('currency').innerText = `Currency: ${currency}`;
+        }
+
+        function startGame() {
+            gameStarted = true;
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('exitPrompt').style.display = 'none';
+        }
+
+        function openSettings() {
+            alert('Settings menu is under construction.');
+        }
+
+        function openExitPrompt() {
+            document.getElementById('exitPrompt').style.display = 'block';
+        }
+
+        function leaveGame() {
+            gameStarted = false;
+            document.getElementById('menu').style.display = 'block';
+            document.getElementById('exitPrompt').style.display = 'none';
+        }
+
+        function continueGame() {
+            document.getElementById('exitPrompt').style.display = 'none';
+        }
+
+        window.addEventListener('keydown', movePlayer);
+        update();
+    </script>
+</body>
+</html>

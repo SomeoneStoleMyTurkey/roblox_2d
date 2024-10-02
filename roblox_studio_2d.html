@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Own Game</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f0f0f0; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        h1 { text-align: center; }
+        label { display: block; margin: 10px 0 5px; }
+        input, textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        button { display: block; width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create Your Own Game</h1>
+        <form id="gameForm">
+            <label for="gameTitle">Game Title</label>
+            <input type="text" id="gameTitle" name="gameTitle" required>
+
+            <label for="gameDescription">Game Description</label>
+            <textarea id="gameDescription" name="gameDescription" rows="5" required></textarea>
+
+            <label for="gameCode">Game Code (HTML/JavaScript)</label>
+            <textarea id="gameCode" name="gameCode" rows="10" required></textarea>
+
+            <button type="button" onclick="publishGame()">Publish Game</button>
+        </form>
+    </div>
+
+    <script>
+        function publishGame() {
+            const title = document.getElementById('gameTitle').value;
+            const description = document.getElementById('gameDescription').value;
+            const code = document.getElementById('gameCode').value;
+
+            if (title && description && code) {
+                const gameData = {
+                    title: title,
+                    description: description,
+                    code: code
+                };
+
+                // Save the game data (this is just a simulation, you would typically send this to a server)
+                console.log('Game Published:', gameData);
+                alert('Game Published Successfully!');
+
+                // Clear the form
+                document.getElementById('gameForm').reset();
+            } else {
+                alert('Please fill out all fields.');
+            }
+        }
+    </script>
+</body>
+</html>
